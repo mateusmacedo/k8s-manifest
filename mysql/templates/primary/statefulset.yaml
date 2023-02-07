@@ -1,5 +1,3 @@
----
-# Source: mysql/templates/primary/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -7,15 +5,13 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/name: mysql
-    helm.sh/chart: mysql-9.4.8
     app.kubernetes.io/instance: mysql
-    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: primary
 spec:
   replicas: 1
   podManagementPolicy: ""
   selector:
-    matchLabels: 
+    matchLabels:
       app.kubernetes.io/name: mysql
       app.kubernetes.io/instance: mysql
       app.kubernetes.io/component: primary
@@ -25,19 +21,16 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configuration: 1ec33844927e894144a6ad4b405033eb63573aced840302b44ff0b3693649c87
       labels:
         app.kubernetes.io/name: mysql
-        helm.sh/chart: mysql-9.4.8
         app.kubernetes.io/instance: mysql
-        app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: primary
     spec:
       serviceAccountName: mysql
-      
+
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -48,27 +41,23 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
       initContainers:
       containers:
         - name: mysql
-          image: docker.io/bitnami/mysql:8.0.32-debian-11-r0
+          image: docker.io/bitnami/mysql:latest
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsNonRoot: true
             runAsUser: 1001
           env:
-            - name: BITNAMI_DEBUG
-              value: "false"
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql
                   key: mysql-root-password
-            - name: MYSQL_DATABASE
-              value: "my_database"
           envFrom:
           ports:
             - name: mysql
@@ -121,9 +110,9 @@ spec:
                       password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
                   fi
                   mysqladmin status -uroot -p"${password_aux}"
-          resources: 
-            limits: {}
-            requests: {}
+          resources:
+            limits: { cpu: 500m, memory: 512Mi }
+            requests: { cpu: 100m, memory: 256Mi }
           volumeMounts:
             - name: data
               mountPath: /bitnami/mysql
@@ -134,10 +123,22 @@ spec:
         - name: config
           configMap:
             name: mysql
+            items:
+              - key: my.cnf
+                path: my.cnf
+        - name: data
+          persistentVolumeClaim:
+            claimName: mysql
+        - name: init-scripts
+          configMap:
+            name: mysql-scripts
+            items:
+              - key: init.sql
+                path: init.sql
   volumeClaimTemplates:
     - metadata:
         name: data
-        labels: 
+        labels:
           app.kubernetes.io/name: mysql
           app.kubernetes.io/instance: mysql
           app.kubernetes.io/component: primary
