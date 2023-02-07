@@ -5,7 +5,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/rule-type: PathPrefix
     traefik.ingress.kubernetes.io/router.entrypoints: http
-    traefik.ingress.kubernetes.io/router.middlewares: [redirect-https]
+    traefik.ingress.kubernetes.io/router.middlewares: redirect-https
 spec:
   rules:
     - host: mysql.local
