@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mysql-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/rule-type: PathPrefix
+    traefik.ingress.kubernetes.io/router.entrypoints: http
+    traefik.ingress.kubernetes.io/router.middlewares: [redirect-https]
+spec:
+  rules:
+    - host: mysql.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mysql
+                port:
+                  name: mysql
