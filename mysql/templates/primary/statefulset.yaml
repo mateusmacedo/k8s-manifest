@@ -47,7 +47,7 @@ spec:
       initContainers:
       containers:
         - name: mysql
-          image: docker.io/bitnami/mysql:latest
+          image: mysql:8.0
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsNonRoot: true
@@ -115,10 +115,13 @@ spec:
             requests: { cpu: 100m, memory: 256Mi }
           volumeMounts:
             - name: data
-              mountPath: /bitnami/mysql
+              mountPath: /var/lib/mysql
             - name: config
-              mountPath: /opt/bitnami/mysql/conf/my.cnf
+              mountPath: /etc/mysql/my.cnf
               subPath: my.cnf
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
       volumes:
         - name: config
           configMap:
