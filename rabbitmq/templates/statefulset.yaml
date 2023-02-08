@@ -1,5 +1,3 @@
----
-# Source: rabbitmq/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -7,9 +5,7 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-11.9.0
     app.kubernetes.io/instance: rabbitmq
-    app.kubernetes.io/managed-by: Helm
 spec:
   serviceName: rabbitmq-headless
   podManagementPolicy: OrderedReady
@@ -24,18 +20,12 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-11.9.0
         app.kubernetes.io/instance: rabbitmq
-        app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: 7337426bd468fab99d7ee47bb6081c2172cc2cb73d35c5b953886ad7e75030aa
-        checksum/secret: b61e04a8cb80d0aa988de7d6d9bc1fb8d8d80fe2d24b349454d31210df860420
     spec:
-      
       serviceAccountName: rabbitmq
       affinity:
         podAffinity:
-          
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -46,7 +36,6 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
       securityContext:
         fsGroup: 1001
       terminationGracePeriodSeconds: 120
@@ -90,7 +79,7 @@ spec:
             - name: K8S_ADDRESS_TYPE
               value: hostname
             - name: RABBITMQ_FEATURE_FLAGS
-              value: 
+              value:
             - name: RABBITMQ_FORCE_BOOT
               value: "no"
             - name: RABBITMQ_NODE_NAME
@@ -119,7 +108,7 @@ spec:
             - name: RABBITMQ_SECURE_PASSWORD
               value: "yes"
             - name: RABBITMQ_USERNAME
-              value: "user"
+              value: "admin"
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -160,8 +149,8 @@ spec:
                 - -ec
                 - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
           resources:
-            limits: {}
-            requests: {}
+            limits: { cpu: 500m, memory: 512Mi }
+            requests: { cpu: 100m, memory: 256Mi }
           volumeMounts:
             - name: configuration
               mountPath: /bitnami/rabbitmq/conf
@@ -181,7 +170,7 @@ spec:
           app.kubernetes.io/instance: rabbitmq
       spec:
         accessModes:
-            - "ReadWriteOnce"
+          - "ReadWriteOnce"
         resources:
           requests:
             storage: "8Gi"
