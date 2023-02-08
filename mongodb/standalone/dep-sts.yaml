@@ -98,8 +98,8 @@ spec:
               command:
                 - /bitnami/scripts/readiness-probe.sh
           resources:
-            limits: {}
-            requests: {}
+            limits: { cpu: 500m, memory: 512Mi }
+            requests: { cpu: 100m, memory: 256Mi }
           volumeMounts:
             - name: datadir
               mountPath: /bitnami/mongodb
