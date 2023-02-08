@@ -125,7 +125,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: mysql
+            name: mysql-config
             items:
               - key: my.cnf
                 path: my.cnf
