@@ -1,24 +1,19 @@
----
-# Source: mongodb/templates/standalone/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+  name: mongodb-service
   namespace: "default"
   labels:
     app.kubernetes.io/name: mongodb
-    helm.sh/chart: mongodb-13.6.7
     app.kubernetes.io/instance: mongodb
-    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: mongodb
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   sessionAffinity: None
   ports:
-    - name: "mongodb"
+    - name: mongodb
       port: 27017
       targetPort: mongodb
-      nodePort: null
   selector:
     app.kubernetes.io/name: mongodb
     app.kubernetes.io/instance: mongodb
