@@ -148,9 +148,9 @@ spec:
                 - /bin/bash
                 - -ec
                 - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
-          resources:
-            limits: { cpu: 500m, memory: 512Mi }
-            requests: { cpu: 100m, memory: 256Mi }
+          # resources:
+          #   limits: { cpu: 500m, memory: 512Mi }
+          #   requests: { cpu: 100m, memory: 256Mi }
           volumeMounts:
             - name: configuration
               mountPath: /bitnami/rabbitmq/conf
