@@ -8,13 +8,17 @@ metadata:
     app.kubernetes.io/instance: mongodb
     app.kubernetes.io/component: database
 spec:
+  serviceName: mongodb-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
   selector:
     matchLabels:
       app.kubernetes.io/name: mongodb
       app.kubernetes.io/instance: mongodb
       app.kubernetes.io/component: database
-  serviceName: mongodb-headless
-  replicas: 1
   template:
     metadata:
       labels:
@@ -23,22 +27,8 @@ spec:
         app.kubernetes.io/component: database
     spec:
       serviceAccountName: mongodb-sa
-      affinity:
-        podAffinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: mongodb
-                    app.kubernetes.io/instance: mongodb
-                    app.kubernetes.io/component: database
-                topologyKey: kubernetes.io/hostname
-              weight: 1
-        nodeAffinity:
       securityContext:
         fsGroup: 1001
-        sysctls: []
       containers:
         - name: mongodb
           image: docker.io/bitnami/mongodb:6.0.4-debian-11-r0

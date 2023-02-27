@@ -157,11 +157,11 @@ externalAccess:
       type: LoadBalancer
   service:
     annotations: {}
-    domain: ""
+    domain: cluster.local
     externalTrafficPolicy: Local
     extraPorts: []
-    loadBalancerClass: ""
-    loadBalancerIPs: []
+    loadBalancerClass: traefik
+    loadBalancerIPs: [192.168.0.55]
     loadBalancerSourceRanges: []
     nodePorts: []
     portName: mongodb
@@ -407,11 +407,7 @@ podSecurityContext:
   enabled: true
   fsGroup: 1001
   sysctls: []
-podSecurityPolicy:
-  allowPrivilegeEscalation: false
-  create: false
-  privileged: false
-  spec: {}
+podSecurityPolicy: {}
 priorityClassName: ""
 rbac:
   create: true
@@ -437,7 +433,7 @@ schedulerName: ""
 service:
   annotations: {}
   clusterIP: ""
-  externalIPs: [10.0.0.182]
+  externalIPs: []
   externalTrafficPolicy: Local
   extraPorts: []
   loadBalancerClass: ""
