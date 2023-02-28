@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: rabbitmq-persistent-storage
+  namespace: infrastructure
+  labels:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/component: persistent-volume-claim
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "8Gi"
