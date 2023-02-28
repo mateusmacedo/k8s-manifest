@@ -27,22 +27,8 @@ spec:
         app.kubernetes.io/component: database
     spec:
       serviceAccountName: redis-sa
-      affinity:
-        podAffinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: redis
-                    app.kubernetes.io/instance: redis
-                    app.kubernetes.io/component: database
-                topologyKey: kubernetes.io/hostname
-              weight: 1
-        nodeAffinity:
       securityContext:
         fsGroup: 1001
-        sysctls: []
       containers:
         - name: redis
           image: redis:latest
@@ -63,16 +49,4 @@ spec:
       volumes:
         - name: redis-data
           persistentVolumeClaim:
-            claimName: redis-data
-  volumeClaimTemplates:
-    - metadata:
-        name: redis-data
-        labels:
-          app.kubernetes.io/name: redis
-          app.kubernetes.io/instance: redis
-          app.kubernetes.io/component: redis
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 5Gi
+            claimName: redis-persistent-storage
