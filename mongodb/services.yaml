@@ -18,26 +18,8 @@ spec:
   selector:
     app.kubernetes.io/name: mongodb
     app.kubernetes.io/instance: mongodb
+    app.kubernetes.io/component: database
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-service
-  namespace: infrastructure
-  labels:
-    app.kubernetes.io/name: mongodb-service
-    app.kubernetes.io/component: service
-spec:
-  type: ClusterIP
-  sessionAffinity: None
-  ports:
-    - name: mongodb
-      port: 27017
-      targetPort: mongodb
-  selector:
-    app.kubernetes.io/name: mongodb
-    app.kubernetes.io/instance: mongodb
 ---
 apiVersion: v1
 kind: Service
@@ -48,12 +30,8 @@ metadata:
   name: mongodb-service-lb
   namespace: infrastructure
 spec:
-  allocateLoadBalancerNodePorts: true
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  type: LoadBalancer
   ports:
     - name: mongodb
       port: 27017
@@ -62,9 +40,4 @@ spec:
   selector:
     app.kubernetes.io/instance: mongodb
     app.kubernetes.io/name: mongodb
-  sessionAffinity: None
-  type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-      - ip: 192.168.0.138
+    app.kubernetes.io/component: database
