@@ -5,8 +5,7 @@ metadata:
   namespace: infrastructure
   labels:
     app.kubernetes.io/name: mysql
-    app.kubernetes.io/instance: mysql
-    app.kubernetes.io/component: database
+    app.kubernetes.io/component: config
 data:
   my.cnf: |
     [mysqld]

@@ -9,16 +9,16 @@ metadata:
     app.kubernetes.io/component: database
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: mysql
-      app.kubernetes.io/instance: mysql
-      app.kubernetes.io/component: database
   serviceName: mysql-headless
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
       partition: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mysql
+      app.kubernetes.io/instance: mysql
+      app.kubernetes.io/component: database
   template:
     metadata:
       labels:
@@ -27,21 +27,8 @@ spec:
         app.kubernetes.io/component: database
     spec:
       serviceAccountName: mysql-sa
-      affinity:
-        podAffinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: mysql
-                    app.kubernetes.io/instance: mysql
-                topologyKey: kubernetes.io/hostname
-              weight: 1
-        nodeAffinity:
       securityContext:
         fsGroup: 1001
-      initContainers:
       containers:
         - name: mysql
           image: mysql:8.0
@@ -116,31 +103,18 @@ spec:
               mountPath: /docker-entrypoint-initdb.d/init.sql
               subPath: init.sql
       volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mysql-persistent-storage
         - name: config
           configMap:
             name: mysql-config
             items:
               - key: my.cnf
                 path: my.cnf
-        - name: data
-          persistentVolumeClaim:
-            claimName: mysql
         - name: init-scripts
           configMap:
             name: mysql-scripts
             items:
               - key: init.sql
                 path: init.sql
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-        labels:
-          app.kubernetes.io/name: mysql
-          app.kubernetes.io/instance: mysql
-          app.kubernetes.io/component: database
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: "8Gi"
