@@ -1,18 +1,12 @@
----
-# Source: localstack/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: localstack
-  namespace: "default"
+  namespace: infrastructure
   labels:
-    helm.sh/chart: localstack-0.5.3
     app.kubernetes.io/name: localstack
     app.kubernetes.io/instance: localstack
-    app.kubernetes.io/version: "latest"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    
+    app.kubernetes.io/component: deployment
 spec:
   replicas: 1
   strategy:
@@ -27,13 +21,10 @@ spec:
         app.kubernetes.io/name: localstack
         app.kubernetes.io/instance: localstack
     spec:
-      serviceAccountName: localstack
-      securityContext:
-        {}
+      serviceAccountName: localstack-sa
       containers:
         - name: localstack
-          securityContext:
-            {}
+          securityContext: {}
           image: "localstack/localstack:latest"
           imagePullPolicy: IfNotPresent
           ports:
@@ -208,8 +199,6 @@ spec:
             httpGet:
               path: /_localstack/health
               port: edge
-          resources:
-            {}
           env:
             - name: DEBUG
               value: "0"
@@ -231,4 +220,3 @@ spec:
               value: "60"
             - name: OVERRIDE_IN_DOCKER
               value: "1"
-      volumes:
